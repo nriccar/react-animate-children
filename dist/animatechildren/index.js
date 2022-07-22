@@ -1,7 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useObservable from '../hooks/useObservable';
-import useScroll from '../hooks/useScroll';
 const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', speed = 50, id = '', className = '', }) => {
     const elements = Array.isArray(children)
         ? children
@@ -22,13 +21,12 @@ const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', spe
     const [isVisibleOnScreen, setIsVisibleOnScreen] = useState(false);
     const ref = useRef();
     const observer = useObservable(ref);
-    const scroll = useScroll();
     useEffect(() => {
         if (!isVisibleOnScreen &&
             ((behaviour === 'scroll' && observer) || behaviour === 'auto')) {
             setIsVisibleOnScreen(true);
         }
-    }, [scroll]);
+    }, [observer]);
     return (React.createElement("div", { className: className }, elements.map((child, index) => {
         return (React.createElement(AnimatedContainer, Object.assign({ key: `animated-child-${id}-${index}`, visible: childrensVisibility[index] && isVisibleOnScreen }, { direction, id, ref }), child));
     })));
@@ -40,11 +38,8 @@ const AnimatedContainer = styled.div `
     opacity: ${({ visible }) => (visible ? 1 : 0)};
 
     top: ${({ visible, direction }) => visible ? 0 : direction === 'down' ? `-${directionOffset}px` : 0};
-
     right: ${({ visible, direction }) => visible ? 0 : direction === 'left' ? `-${directionOffset}px` : 0};
-
     bottom: ${({ visible, direction }) => visible ? 0 : direction === 'up' ? `-${directionOffset}px` : 0};
-
     left: ${({ visible, direction }) => visible ? 0 : direction === 'right' ? `-${directionOffset}px` : 0};
   }
 `;

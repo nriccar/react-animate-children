@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import useObservable from '../hooks/useObservable'
-import useScroll from '../hooks/useScroll'
 
 /**
  * * animatechildren receives children as a prop and animates them programatically
@@ -57,7 +56,6 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
 
   const ref = useRef()
   const observer = useObservable(ref)
-  const scroll = useScroll()
 
   useEffect(() => {
     if (
@@ -66,7 +64,7 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
     ) {
       setIsVisibleOnScreen(true)
     }
-  }, [scroll])
+  }, [observer])
 
   return (
     <div className={className}>
@@ -101,13 +99,10 @@ const AnimatedContainer = styled.div<AnimatedContainerProps>`
 
     top: ${({ visible, direction }) =>
       visible ? 0 : direction === 'down' ? `-${directionOffset}px` : 0};
-
     right: ${({ visible, direction }) =>
       visible ? 0 : direction === 'left' ? `-${directionOffset}px` : 0};
-
     bottom: ${({ visible, direction }) =>
       visible ? 0 : direction === 'up' ? `-${directionOffset}px` : 0};
-
     left: ${({ visible, direction }) =>
       visible ? 0 : direction === 'right' ? `-${directionOffset}px` : 0};
   }
