@@ -73,6 +73,7 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
       {elements.map((child, index) => {
         return (
           <AnimatedContainer
+            key={`animated-child-${id}-${index}`}
             visible={childrensVisibility[index] && isVisibleOnScreen}
             {...{ direction, id, ref }}
           >

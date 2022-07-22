@@ -30,7 +30,7 @@ const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', spe
         }
     }, [scroll]);
     return (React.createElement("div", { className: className }, elements.map((child, index) => {
-        return (React.createElement(AnimatedContainer, Object.assign({ visible: childrensVisibility[index] && isVisibleOnScreen }, { direction, id, ref }), child));
+        return (React.createElement(AnimatedContainer, Object.assign({ key: `animated-child-${id}-${index}`, visible: childrensVisibility[index] && isVisibleOnScreen }, { direction, id, ref }), child));
     })));
 };
 const directionOffset = 50;
