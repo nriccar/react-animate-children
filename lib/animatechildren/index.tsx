@@ -2,6 +2,8 @@ import React, { useRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 import useObservable from '../hooks/useObservable'
+import useScroll from '../hooks/useScroll'
+import useWindowSize from '../hooks/useWindowSize'
 
 /**
  * * animatechildren receives children as a prop and animates them programatically
@@ -56,15 +58,23 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
 
   const ref = useRef()
   const observer = useObservable(ref)
+  const { isMobile } = useWindowSize()
+  const scroll = useScroll()
+
+  const scrollBehaviour = behaviour === 'scroll' && observer
+  const autoBehaviour = behaviour === 'auto'
 
   useEffect(() => {
-    if (
-      !isVisibleOnScreen &&
-      ((behaviour === 'scroll' && observer) || behaviour === 'auto')
-    ) {
+    if (!isVisibleOnScreen && (scrollBehaviour || autoBehaviour)) {
       setIsVisibleOnScreen(true)
     }
-  }, [observer])
+  }, [scroll])
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsVisibleOnScreen(true)
+    }
+  }, [scroll, isMobile])
 
   return (
     <div className={className}>

@@ -1,6 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import useObservable from '../hooks/useObservable';
+import useScroll from '../hooks/useScroll';
+import useWindowSize from '../hooks/useWindowSize';
 const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', speed = 50, id = '', className = '', }) => {
     const elements = Array.isArray(children)
         ? children
@@ -21,12 +23,20 @@ const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', spe
     const [isVisibleOnScreen, setIsVisibleOnScreen] = useState(false);
     const ref = useRef();
     const observer = useObservable(ref);
+    const { isMobile } = useWindowSize();
+    const scroll = useScroll();
+    const scrollBehaviour = behaviour === 'scroll' && observer;
+    const autoBehaviour = behaviour === 'auto';
     useEffect(() => {
-        if (!isVisibleOnScreen &&
-            ((behaviour === 'scroll' && observer) || behaviour === 'auto')) {
+        if (!isVisibleOnScreen && (scrollBehaviour || autoBehaviour)) {
             setIsVisibleOnScreen(true);
         }
-    }, [observer]);
+    }, [scroll]);
+    useEffect(() => {
+        if (isMobile) {
+            setIsVisibleOnScreen(true);
+        }
+    }, [scroll, isMobile]);
     return (React.createElement("div", { className: className }, elements.map((child, index) => {
         return (React.createElement(AnimatedContainer, Object.assign({ key: `animated-child-${id}-${index}`, visible: childrensVisibility[index] && isVisibleOnScreen }, { direction, id, ref }), child));
     })));
