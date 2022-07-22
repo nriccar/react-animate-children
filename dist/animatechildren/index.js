@@ -3,7 +3,9 @@ import styled from 'styled-components';
 import useObservable from '../hooks/useObservable';
 import useScroll from '../hooks/useScroll';
 const AnimateChildren = ({ children, direction = 'down', behaviour = 'auto', speed = 50, id = '', className = '', }) => {
-    const elements = Array.isArray(children) ? children : [children, null];
+    const elements = Array.isArray(children)
+        ? children
+        : [children, null];
     const elementsLength = elements.length;
     const [childrensVisibility, setChildrensVisibility] = useState(Array.from({ length: elementsLength }, () => false));
     const [index, setIndex] = useState(0);

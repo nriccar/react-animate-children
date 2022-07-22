@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const useScroll = () => {
+const useScroll = (): number => {
   const [scrollPosition, setScrollPosition] = useState<number>(0)
 
   const updatePosition = () => {

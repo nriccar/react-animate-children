@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const useObservable = (ref: any) => {
+const useObservable = (ref: any): boolean => {
   const [isIntersecting, setIntersecting] = useState<boolean>(false)
 
   const observer: IntersectionObserver = new IntersectionObserver(

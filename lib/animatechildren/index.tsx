@@ -29,14 +29,17 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
   id = '',
   className = '',
 }): JSX.Element => {
-  const elements = Array.isArray(children) ? children : [children, null]
-  const elementsLength = elements.length
+  const elements: React.ReactNode[] = Array.isArray(children)
+    ? children
+    : [children, null]
 
-  const [childrensVisibility, setChildrensVisibility] = useState(
+  const elementsLength: number = elements.length
+
+  const [childrensVisibility, setChildrensVisibility] = useState<boolean[]>(
     Array.from({ length: elementsLength }, () => false)
   )
 
-  const [index, setIndex] = useState(0)
+  const [index, setIndex] = useState<number>(0)
 
   useEffect(() => {
     if (index < elementsLength) {
