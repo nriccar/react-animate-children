@@ -11,9 +11,10 @@
     "type": "git",
     "url": "git+https://github.com/nriccar/react-animate-children"
   },
-  "version": "2.1.0",
+  "version": "2.1.6",
   "main": "index.js",
   "scripts": {
+    "debug": "cd debug && npm start",
     "test": "jest",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc && cp package.json README.md ./dist",
