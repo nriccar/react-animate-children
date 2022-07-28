@@ -1,9 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react'
+
 import styled from 'styled-components'
 
 import useObservable from '../hooks/useObservable'
 import useScroll from '../hooks/useScroll'
 import useWindowSize from '../hooks/useWindowSize'
+
+import uuid from '../utils/uuid'
 
 /**
  * * animatechildren receives children as a prop and animates them programatically
@@ -17,8 +20,9 @@ interface AnimateChildrenProps {
   children: React.ReactNode
   direction?: 'left' | 'right' | 'up' | 'down'
   behaviour?: 'scroll' | 'auto'
+  unmountObserve?: boolean
   speed?: number
-  id?: string
+  offset?: number
   className?: string
 }
 
@@ -26,8 +30,9 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
   children,
   direction = 'down',
   behaviour = 'auto',
-  speed = 50,
-  id = '',
+  unmountObserve = false,
+  speed = 500,
+  offset = 50,
   className = '',
 }): JSX.Element => {
   const elements: React.ReactNode[] = Array.isArray(children)
@@ -54,36 +59,43 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
     }
   }, [index])
 
-  const [isVisibleOnScreen, setIsVisibleOnScreen] = useState<boolean>(false)
+  const [visible, setVisible] = useState<boolean>(false)
 
-  const ref = useRef()
-  const observer = useObservable(ref)
-  const { isMobile } = useWindowSize()
-  const scroll = useScroll()
+  const ref = useRef() as React.MutableRefObject<HTMLInputElement>
+  const observer: boolean = useObservable(ref)
 
-  const scrollBehaviour = behaviour === 'scroll' && observer
-  const autoBehaviour = behaviour === 'auto'
+  const { isMobile }: { isMobile: boolean } = useWindowSize()
+  const scroll: number = useScroll()
+
+  const scrollBehaviour: boolean = behaviour === 'scroll'
+  const autoBehaviour: boolean = behaviour === 'auto'
+
+  const shouldUnmount: boolean = unmountObserve && !observer && scrollBehaviour
+  const shouldMount: boolean =
+    (scrollBehaviour && observer) || autoBehaviour || isMobile
 
   useEffect(() => {
-    if (!isVisibleOnScreen && (scrollBehaviour || autoBehaviour)) {
-      setIsVisibleOnScreen(true)
+    if (shouldUnmount) {
+      setVisible(false)
+    }
+
+    if (shouldMount) {
+      setVisible(true)
     }
   }, [scroll])
 
-  useEffect(() => {
-    if (isMobile) {
-      setIsVisibleOnScreen(true)
-    }
-  }, [scroll, isMobile])
+  const id = uuid()
 
   return (
-    <div className={className}>
+    <div {...{ className }}>
       {elements.map((child, index) => {
+        const childVisible: boolean = childrensVisibility[index] && visible
+
         return (
           <AnimatedContainer
-            key={`animated-child-${id}-${index}`}
-            visible={childrensVisibility[index] && isVisibleOnScreen}
-            {...{ direction, id, ref }}
+            ref={ref}
+            visible={childVisible}
+            {...{ direction, offset }}
           >
             {child}
           </AnimatedContainer>
@@ -96,25 +108,22 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
 interface AnimatedContainerProps {
   visible: boolean
   direction: 'left' | 'right' | 'up' | 'down'
-  id: string
-  ref: any
+  offset: number
 }
-
-const directionOffset = 50
 
 const AnimatedContainer = styled.div<AnimatedContainerProps>`
   > * {
     transition: all 0.3s;
     opacity: ${({ visible }) => (visible ? 1 : 0)};
 
-    top: ${({ visible, direction }) =>
-      visible ? 0 : direction === 'down' ? `-${directionOffset}px` : 0};
-    right: ${({ visible, direction }) =>
-      visible ? 0 : direction === 'left' ? `-${directionOffset}px` : 0};
-    bottom: ${({ visible, direction }) =>
-      visible ? 0 : direction === 'up' ? `-${directionOffset}px` : 0};
-    left: ${({ visible, direction }) =>
-      visible ? 0 : direction === 'right' ? `-${directionOffset}px` : 0};
+    top: ${({ visible, direction, offset }) =>
+      visible ? 0 : direction === 'down' ? `-${offset}px` : 0};
+    right: ${({ visible, direction, offset }) =>
+      visible ? 0 : direction === 'left' ? `-${offset}px` : 0};
+    bottom: ${({ visible, direction, offset }) =>
+      visible ? 0 : direction === 'up' ? `-${offset}px` : 0};
+    left: ${({ visible, direction, offset }) =>
+      visible ? 0 : direction === 'right' ? `-${offset}px` : 0};
   }
 `
 
