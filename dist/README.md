@@ -4,6 +4,11 @@ React Animate Children allows to add microinteractions to the mounting phase of 
 
 This library features `IntersectionObserver` so that the animation can start once the children are visible on the screen!
 
+## Features
+
+- Compatible with `styled-components`
+- Use of `IntersectionObserver` api
+
 ## Installation
 
 ```
@@ -31,7 +36,8 @@ const Test() {
 | children  | React Node(s)                 | null    | Yes      | Children components wrapped inside AnimateChildren                                                                            |
 | direction | 'left', 'right', 'up', 'down' | down    | No       | Specifies the direction in which the component will get mounted                                                               |
 | behaviour | 'scroll', 'auto'              | auto    | No       | Auto will mount the children components once the page loads, scroll will load them when the children is visible on the screen |
-| speed     | number                        | 50      | No       | Specifies the time it will take to start the animation                                                                        |
+| speed     | number                        | 500     | No       | Specifies the time it will take to start the animation                                                                        |
+| offset    | number                        | 50      | No       | Specifies how many pixels it will have as offset when the animation start                                                     |
 
 ## Credits
 

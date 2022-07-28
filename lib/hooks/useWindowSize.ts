@@ -15,7 +15,7 @@ const useWindowSize = (): WindowSize => {
 
   const handleResize = () =>
     setWindowSize({
-      isMobile: windowSize.width <= 480,
+      isMobile: window.innerWidth <= 480,
       width: window.innerWidth,
       height: window.innerHeight,
     })

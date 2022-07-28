@@ -6,34 +6,33 @@ import useObservable from '../hooks/useObservable'
 import useScroll from '../hooks/useScroll'
 import useWindowSize from '../hooks/useWindowSize'
 
-import uuid from '../utils/uuid'
-
 /**
  * * animatechildren receives children as a prop and animates them programatically
  * * @param {children} jsx elements to render
  * * @param {direction} direction of animation
  * * @param {behaviour} behaviour of mounting - scroll will mount when the element is in the viewport
  * * @param {speed} speed of mounting
+ * * @param {offset} offset of mounting
  */
 
 interface AnimateChildrenProps {
   children: React.ReactNode
   direction?: 'left' | 'right' | 'up' | 'down'
   behaviour?: 'scroll' | 'auto'
-  unmountObserve?: boolean
   speed?: number
   offset?: number
   className?: string
+  key?: string
 }
 
 const AnimateChildren: React.FC<AnimateChildrenProps> = ({
   children,
   direction = 'down',
   behaviour = 'auto',
-  unmountObserve = false,
   speed = 500,
   offset = 50,
   className = '',
+  key = '',
 }): JSX.Element => {
   const elements: React.ReactNode[] = Array.isArray(children)
     ? children
@@ -59,7 +58,45 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
     }
   }, [index])
 
-  const [visible, setVisible] = useState<boolean>(false)
+  return (
+    <div {...{ className, key }}>
+      {elements.map((child, index) => {
+        return (
+          <AnimateChildrenItem
+            key={`react-animate-children-${index}-${key}-children-item`}
+            {...{
+              childrensVisibility,
+              index,
+              child,
+              direction,
+              behaviour,
+              offset,
+            }}
+          />
+        )
+      })}
+    </div>
+  )
+}
+
+interface AnimateChildrenItemProps {
+  childrensVisibility: boolean[]
+  index: number
+  child: React.ReactNode
+  direction: 'left' | 'right' | 'up' | 'down'
+  behaviour: 'scroll' | 'auto'
+  offset: number
+}
+
+const AnimateChildrenItem: React.FC<AnimateChildrenItemProps> = ({
+  childrensVisibility,
+  index,
+  child,
+  direction,
+  behaviour,
+  offset,
+}): JSX.Element => {
+  const [childrenVisibility, setChildrenVisibility] = useState<boolean>(false)
 
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>
   const observer: boolean = useObservable(ref)
@@ -68,50 +105,37 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
   const scroll: number = useScroll()
 
   const scrollBehaviour: boolean = behaviour === 'scroll'
-  const autoBehaviour: boolean = behaviour === 'auto'
-
-  const shouldUnmount: boolean = unmountObserve && !observer && scrollBehaviour
-  const shouldMount: boolean =
-    (scrollBehaviour && observer) || autoBehaviour || isMobile
 
   useEffect(() => {
-    if (shouldUnmount) {
-      setVisible(false)
+    if (scrollBehaviour) {
+      setChildrenVisibility(observer)
     }
 
-    if (shouldMount) {
-      setVisible(true)
+    if (!scrollBehaviour || isMobile) {
+      setChildrenVisibility(true)
     }
-  }, [scroll])
+  }, [scroll, observer])
 
-  const id = uuid()
+  const childVisible: boolean = childrensVisibility[index] && childrenVisibility
 
   return (
-    <div {...{ className }}>
-      {elements.map((child, index) => {
-        const childVisible: boolean = childrensVisibility[index] && visible
-
-        return (
-          <AnimatedContainer
-            ref={ref}
-            visible={childVisible}
-            {...{ direction, offset }}
-          >
-            {child}
-          </AnimatedContainer>
-        )
-      })}
-    </div>
+    <AnimateContainer
+      ref={ref}
+      {...{ direction, offset }}
+      visible={childVisible}
+    >
+      {child}
+    </AnimateContainer>
   )
 }
 
-interface AnimatedContainerProps {
+interface AnimateContainerProps {
   visible: boolean
   direction: 'left' | 'right' | 'up' | 'down'
   offset: number
 }
 
-const AnimatedContainer = styled.div<AnimatedContainerProps>`
+const AnimateContainer = styled.div<AnimateContainerProps>`
   > * {
     transition: all 0.3s;
     opacity: ${({ visible }) => (visible ? 1 : 0)};
