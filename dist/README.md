@@ -1,4 +1,4 @@
-# [React Animate Children](https://github.com/nriccar/react-animate-children) &middot; [![npm version](https://img.shields.io/npm/v/react.svg?style=flat)](https://www.npmjs.com/package/react-animate-children) ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+# [React Animate Children](https://www.npmjs.com/package/react-animate-children) &middot; ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
 
 React Animate Children allows to add microinteractions to the mounting phase of components.
 
