@@ -11,7 +11,7 @@
     "type": "git",
     "url": "git+https://github.com/nriccar/react-animate-children"
   },
-  "version": "2.1.10",
+  "version": "2.1.9",
   "main": "index.js",
   "scripts": {
     "debug": "npm run build && cd debug && npm i && npm start && cd ..",
@@ -22,7 +22,7 @@
     "format": "npm run prettier -- --write",
     "prettier": "prettier \"lib/**/*.+(js|jsx|json|ts|tsx|md)\"",
     "validate": "npm run lint && npm run format",
-    "deploy": "npm run validate && npm t && npm run build && git add . && npm version patch &&  npm publish ./dist"
+    "deploy": "npm run validate && npm t && npm run build && git add . && git commit -m \"[master] $1\" && npm version patch &&  npm publish ./dist"
   },
   "license": "ISC",
   "devDependencies": {

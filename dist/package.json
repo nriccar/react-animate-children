@@ -11,15 +11,18 @@
     "type": "git",
     "url": "git+https://github.com/nriccar/react-animate-children"
   },
-  "version": "2.1.8",
+  "version": "2.1.9",
   "main": "index.js",
   "scripts": {
-    "start": "react-scripts start",
     "debug": "npm run build && cd debug && npm i && npm start && cd ..",
     "test": "jest",
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc && cp package.json README.md ./dist",
-    "deploy": "npm t && npm run build && npm publish ./dist"
+    "lint": "eslint .",
+    "format": "npm run prettier -- --write",
+    "prettier": "prettier \"lib/**/*.+(js|jsx|json|ts|tsx|md)\"",
+    "validate": "npm run lint && npm run format",
+    "deploy": "npm run validate && npm t && npm run build && git add . && git commit -m \"[master] $1\" && npm version patch &&  npm publish ./dist"
   },
   "license": "ISC",
   "devDependencies": {
@@ -36,10 +39,15 @@
     "react-test-renderer": "^18.2.0",
     "ts-jest": "^28.0.7",
     "ts-node": "^10.9.1",
-    "typescript": "^4.7.4"
-  },
-  "dependencies": {
-    "styled-components": "^5.3.5"
+    "typescript": "^4.7.4",
+    "styled-components": "^5.3.5",
+    "babel-eslint": "^9.0.0",
+    "eslint": "^5.5.0",
+    "eslint-config-prettier": "^3.0.1",
+    "flow-bin": "^0.81.0",
+    "husky": "^0.14.3",
+    "lint-staged": "^7.2.2",
+    "prettier": "^1.14.2"
   },
   "browserslist": {
     "production": [
