@@ -41,7 +41,7 @@ const AnimateChildren: React.FC<AnimateChildrenProps> = ({
   const elementsLength: number = elements.length
 
   const [childrensVisibility, setChildrensVisibility] = useState<boolean[]>(
-    Array.from({ length: elementsLength }, () => false)
+    Array.from({ length: elementsLength }, () => false),
   )
 
   const [index, setIndex] = useState<number>(0)

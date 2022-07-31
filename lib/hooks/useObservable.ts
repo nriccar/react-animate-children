@@ -9,7 +9,7 @@ const useObservable = (ref: any): boolean => {
       root: null,
       rootMargin: '15%',
       threshold: 0.1,
-    }
+    },
   )
 
   useEffect(() => {
