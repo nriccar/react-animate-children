@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from 'react'
 
 import styled from 'styled-components'
 
-import useObservable from '../hooks/useObservable'
+import useIntersectionObserver from '../hooks/useIntersectionObserver'
 import useScroll from '../hooks/useScroll'
 import useWindowSize from '../hooks/useWindowSize'
 
@@ -98,17 +98,19 @@ const AnimateChildrenItem: React.FC<AnimateChildrenItemProps> = ({
 }): JSX.Element => {
   const [childrenVisibility, setChildrenVisibility] = useState<boolean>(false)
 
+  const scrollBehaviour: boolean = behaviour === 'scroll'
+
   const ref = useRef() as React.MutableRefObject<HTMLInputElement>
-  const observer: boolean = useObservable(ref)
+  const observer = useIntersectionObserver(ref, {
+    freezeOnceVisible: !scrollBehaviour,
+  })
 
   const { isMobile }: { isMobile: boolean } = useWindowSize()
   const scroll: number = useScroll()
 
-  const scrollBehaviour: boolean = behaviour === 'scroll'
-
   useEffect(() => {
     if (scrollBehaviour) {
-      setChildrenVisibility(observer)
+      setChildrenVisibility(!!observer?.isIntersecting)
     }
 
     if (!scrollBehaviour || isMobile) {

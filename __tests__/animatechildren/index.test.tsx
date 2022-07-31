@@ -1,3 +1,4 @@
+import 'jest-styled-components'
 import '@testing-library/jest-dom'
 
 import * as React from 'react'
@@ -90,4 +91,33 @@ test('renders child(s) according to speed prop', () => {
   expect(screen.getByText(testChilds[1].props.children)).toBeInTheDocument()
   expect(screen.getByText(testChilds[2].props.children)).toBeInTheDocument()
   expect(setTimeout).toHaveBeenCalledTimes(3)
+})
+
+test('direction and offset props works properly', () => {
+  const testChilds = [
+    <div>Child 1</div>,
+    <div>Child 2</div>,
+    <div>Child 3</div>,
+  ]
+
+  const directions: ('left' | 'right' | 'up' | 'down')[] = [
+    'up',
+    'down',
+    'left',
+    'right',
+  ]
+
+  const offset = 20
+
+  render(
+    <AnimateChildren direction="up" {...{ offset }}>
+      {testChilds.map((child, index) => (
+        <div key={`testchild-${index}`}>{child}</div>
+      ))}
+    </AnimateChildren>,
+  )
+
+  /**
+   * @TODO: use jest-styled-components to test the style of the child
+   */
 })
