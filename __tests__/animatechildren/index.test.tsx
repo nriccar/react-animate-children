@@ -1,24 +1,12 @@
-import 'jest-styled-components'
 import '@testing-library/jest-dom'
+import 'jest-styled-components'
 
 import * as React from 'react'
-import { act, render, screen } from '@testing-library/react'
-import AnimateChildren from '../../lib/animatechildren'
+import { act, render } from '@testing-library/react'
 
-beforeAll(() => {
-  const intersectionObserverMock = () => ({
-    observe: jest.fn(),
-    disconnect: jest.fn(),
-  })
-
-  window.IntersectionObserver = jest
-    .fn()
-    .mockImplementation(intersectionObserverMock)
-})
-
-afterAll(() => {
-  jest.clearAllMocks()
-})
+import AnimateChildren, {
+  AnimateChildrenProps,
+} from '../../lib/animatechildren'
 
 beforeEach(() => {
   jest.useFakeTimers()
@@ -27,97 +15,60 @@ beforeEach(() => {
 afterEach(() => {
   jest.runOnlyPendingTimers()
   jest.useRealTimers()
+  jest.clearAllMocks()
 })
 
-test('renders N child(s) successfully', () => {
-  const testChilds = [
-    <div>Child 1</div>,
-    <div>Child 2</div>,
-    <div>Child 3</div>,
-  ]
+const testChildsAmount = 100
+const testChilds = Array.from(
+  { length: testChildsAmount },
+  (_, index) => `child ${index}`,
+)
 
-  const fakeTestChilds = [<div>X</div>, <div>Y</div>, <div>Z</div>]
-
-  render(
-    <AnimateChildren>
+const renderAnimateChildren = ({
+  speed = 500,
+  behaviour = 'auto',
+}: AnimateChildrenProps) => {
+  const utils = render(
+    <AnimateChildren {...{ speed, behaviour }}>
       {testChilds.map((child, index) => (
         <div key={`testchild-${index}`}>{child}</div>
       ))}
     </AnimateChildren>,
   )
 
-  testChilds.map(child => {
-    expect(screen.getByText(child.props.children)).toBeInTheDocument()
-  })
+  return {
+    ...utils,
+  }
+}
 
-  fakeTestChilds.map(child => {
-    expect(screen.queryByText(child.props.children)).toBeNull()
-  })
+test('renders N child(s) successfully', () => {
+  const { getAllByText } = renderAnimateChildren({})
+  const childs = getAllByText(/child/i)
+  expect(childs).toHaveLength(testChildsAmount)
 })
 
 test('renders child(s) according to speed prop', () => {
-  jest.spyOn(global, 'setTimeout')
-
-  const testChilds = [
-    <div>Child 1</div>,
-    <div>Child 2</div>,
-    <div>Child 3</div>,
-  ]
-
   const speedProp = 1000
+  const { getByTestId, getAllByText } = renderAnimateChildren({
+    speed: speedProp,
+  })
 
-  render(
-    <AnimateChildren speed={speedProp}>
-      {testChilds.map((child, index) => (
-        <div key={`testchild-${index}`}>{child}</div>
-      ))}
-    </AnimateChildren>,
-  )
-
-  expect(screen.getByText(testChilds[0].props.children)).toBeInTheDocument()
-  expect(setTimeout).toHaveBeenCalledTimes(1)
+  const childs = getAllByText(/child/i)
+  let childsIndex = 0
 
   act(() => {
     jest.advanceTimersByTime(speedProp)
   })
-  expect(screen.getByText(testChilds[0].props.children)).toBeInTheDocument()
-  expect(screen.getByText(testChilds[1].props.children)).toBeInTheDocument()
-  expect(setTimeout).toHaveBeenCalledTimes(2)
 
-  act(() => {
-    jest.advanceTimersByTime(speedProp)
-  })
-  expect(screen.getByText(testChilds[0].props.children)).toBeInTheDocument()
-  expect(screen.getByText(testChilds[1].props.children)).toBeInTheDocument()
-  expect(screen.getByText(testChilds[2].props.children)).toBeInTheDocument()
-  expect(setTimeout).toHaveBeenCalledTimes(3)
-})
+  while (childsIndex < childs.length) {
+    expect(
+      getByTestId('react-animate-children-' + childsIndex),
+    ).toHaveStyleRule('opacity', '1')
 
-test('direction and offset props works properly', () => {
-  const testChilds = [
-    <div>Child 1</div>,
-    <div>Child 2</div>,
-    <div>Child 3</div>,
-  ]
+    act(() => {
+      jest.advanceTimersByTime(speedProp)
+    })
 
-  const directions: ('left' | 'right' | 'up' | 'down')[] = [
-    'up',
-    'down',
-    'left',
-    'right',
-  ]
-
-  const offset = 20
-
-  render(
-    <AnimateChildren direction="up" {...{ offset }}>
-      {testChilds.map((child, index) => (
-        <div key={`testchild-${index}`}>{child}</div>
-      ))}
-    </AnimateChildren>,
-  )
-
-  /**
-   * @TODO: use jest-styled-components to test the style of the child
-   */
+    childsIndex++
+  }
 })

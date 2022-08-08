@@ -15,8 +15,8 @@ import useWindowSize from '../hooks/useWindowSize'
  * * @param {offset} offset of mounting
  */
 
-interface AnimateChildrenProps {
-  children: React.ReactNode
+export interface AnimateChildrenProps {
+  children?: React.ReactNode
   direction?: 'left' | 'right' | 'up' | 'down'
   behaviour?: 'scroll' | 'auto'
   speed?: number
@@ -125,6 +125,7 @@ const AnimateChildrenItem: React.FC<AnimateChildrenItemProps> = ({
       ref={ref}
       {...{ direction, offset }}
       visible={childVisible}
+      data-testid={`react-animate-children-${index}`}
     >
       {child}
     </AnimateContainer>
@@ -138,19 +139,17 @@ interface AnimateContainerProps {
 }
 
 const AnimateContainer = styled.div<AnimateContainerProps>`
-  > * {
-    transition: all 0.3s;
-    opacity: ${({ visible }) => (visible ? 1 : 0)};
+  transition: all 0.3s;
+  opacity: ${({ visible }) => (visible ? 1 : 0)};
 
-    top: ${({ visible, direction, offset }) =>
-      visible ? 0 : direction === 'down' ? `-${offset}px` : 0};
-    right: ${({ visible, direction, offset }) =>
-      visible ? 0 : direction === 'left' ? `-${offset}px` : 0};
-    bottom: ${({ visible, direction, offset }) =>
-      visible ? 0 : direction === 'up' ? `-${offset}px` : 0};
-    left: ${({ visible, direction, offset }) =>
-      visible ? 0 : direction === 'right' ? `-${offset}px` : 0};
-  }
+  top: ${({ visible, direction, offset }) =>
+    visible ? 0 : direction === 'down' ? `-${offset}px` : 0};
+  right: ${({ visible, direction, offset }) =>
+    visible ? 0 : direction === 'left' ? `-${offset}px` : 0};
+  bottom: ${({ visible, direction, offset }) =>
+    visible ? 0 : direction === 'up' ? `-${offset}px` : 0};
+  left: ${({ visible, direction, offset }) =>
+    visible ? 0 : direction === 'right' ? `-${offset}px` : 0};
 `
 
 export default AnimateChildren
