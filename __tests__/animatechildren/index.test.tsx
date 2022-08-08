@@ -36,26 +36,26 @@ const renderAnimateChildren = ({
     </AnimateChildren>,
   )
 
+  const childs = utils.getAllByText(/child/i)
+
   return {
+    childs,
     ...utils,
   }
 }
 
 test('renders N child(s) successfully', () => {
-  const { getAllByText } = renderAnimateChildren({})
-  const childs = getAllByText(/child/i)
+  const { childs } = renderAnimateChildren({})
   expect(childs).toHaveLength(testChildsAmount)
 })
 
 test('renders child(s) according to speed prop', () => {
   const speedProp = 1000
-  const { getByTestId, getAllByText } = renderAnimateChildren({
+  const { childs, getByTestId } = renderAnimateChildren({
     speed: speedProp,
   })
 
-  const childs = getAllByText(/child/i)
   let childsIndex = 0
-
   act(() => {
     jest.advanceTimersByTime(speedProp)
   })
