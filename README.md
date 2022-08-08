@@ -20,10 +20,10 @@ npm i react-animate-children
 ```jsx
 import AnimateChildren from 'react-animate-children'
 
-const Test() {
+const Test = () => {
   return (
     <AnimateChildren>
-      <div>Hello</div>
+      <div>Hello World</div>
     </AnimateChildren>
   )
 }
